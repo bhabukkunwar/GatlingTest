@@ -1,0 +1,10 @@
+{
+  "simulation": "com.perf.tests.RestApi",
+  "simulationId": "restapi",
+  "start": 1675844483053,
+  "description": "",
+  "scenarios": ["Create User", "update User"],
+  "assertions": [
+
+  ]
+}

@@ -6,6 +6,8 @@ class RestApi extends Simulation {
 
   var httpProtocol = http.baseUrl("https://reqres.in/api")
 
+  var vesaProtocol = http.baseUrl("http://localhost:8000")
+
   var createUser = scenario("Create User").exec(
     http("post req").post("/users").header("content-type","application/json").asJson.body(RawFileBody("data/users.json")).asJson
       .check(jsonPath("$.name").is("morpheus"), status is 201)
@@ -17,6 +19,15 @@ class RestApi extends Simulation {
     )
   )
 
-  setUp(createUser.inject(rampUsers(10).during(5)), updateUser.inject(rampUsers(3).during(5))).protocols(httpProtocol)
+  var vesaLogin = scenario("login vesa").exec(http("login").post("/user/login").body(RawFileBody("data/users.json")).asJson)
 
+  var listModel = scenario("list model").exec(
+    http("list").get("/model/list")
+  )
+
+  var listAllResources = scenario("List All Resource").exec(http("GetAllResources").get("/projectresource/all"))
+
+  //setUp(createUser.inject(rampUsers(10).during(5)), updateUser.inject(rampUsers(3).during(5))).protocols(httpProtocol)
+//  setUp(vesaLogin.inject(atOnceUsers(10))).protocols(vesaProtocol)
+  setUp(vesaLogin.inject(rampUsers(1000).during(5)),listModel.inject(atOnceUsers(1000)),listAllResources.inject((atOnceUsers(1000)))).protocols(vesaProtocol)
 }
